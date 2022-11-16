@@ -1,0 +1,43 @@
+import { LocaleMessageObject } from 'vue-i18n/types'
+
+const messages: LocaleMessageObject = {
+    create: "Döretmek",
+    save: "Ýatda saklatmak",
+    changeStatus: "Statusyny çalyşmak",
+    delete: "Pozmak",
+    accept: "Kabul etmek",
+    deleteAll: "Hemmesini pozmak",
+    acceptAll: "Hemmesini kabul etmek",
+    defected_damaged: "Görnüşi üýtgetmek",
+    transferBlank: "Blanklary ugratmak",
+    refresh: "Täzeden ýüklemek",
+    print: "Çap et",
+    download: "Ýüklemek",
+    trash: "Ýok etmek",
+    document: "Resminama",
+    payment: "Töleg",
+    registrationService: "Bellige almak hyzmaty",
+    refusalService: "Ýüz döndermek hereketi",
+    suspendStatement: "Togtatmak (Görnüş 35)",
+    analysisProcess: "Seljerme Prossesi",
+    suspendService: "Belliga almagy togtatmak hyzmaty",
+    changeService: "Ýalňyşlyklary düzetmek hyzmaty",
+    giveInformationService: "Maglumat bermek hyzmaty",
+    legalAidService: "Hukuk maslahaty hyzmaty",
+    confirmationService: "Kepilnama bermek hyzmaty",
+    createFrom: "-dan dörediň",
+    rotateLeft: "Çepe dönmek",
+    rotateRight: "Saga dönmek",
+    orderUp: "Ýokaryk",
+    orderDown: "Aşag",
+    scanner: "Skanirlemek",
+    uploadFile: "Faýl ýüklemek",
+    certificateReceiver: "Kim, haçan aldy",
+    reject: "Ret et",
+    confirm: "Tassykla",
+    notificationPrint: "Habarnamany çap etmek",
+    notificationDownload: "Habarnamany ýüklemek",
+}
+export default messages;
+
+

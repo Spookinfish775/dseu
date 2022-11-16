@@ -1,0 +1,227 @@
+<template>
+	<div>
+		<DxTreeList
+			height="80vh"
+			parent-id-expr="parentId"
+			:data-source="organization"
+			:show-borders="true"
+			:errorRowEnabled="false"
+			:remote-operations="true"
+			:allow-column-reordering="true"
+			:allow-column-resizing="true"
+			:column-auto-width="true"
+			:load-panel="{
+				enabled: true,
+				indicatorSrc: require('~/static/icons/loading.gif')
+			}"
+			:remoteOperations="{
+				filtering: true,
+				sorting: true,
+				grouping: true
+			}"
+			@row-dbl-click="rowDblClick"
+			@toolbar-preparing="toolbarPreparing"
+		>
+			<DxFilterRow :visible="true" />
+			<DxHeaderFilter :visible="true" />
+			<DxColumnChooser :enabled="true" />
+			<DxColumnFixing :enabled="true" />
+			<DxSearchPanel position="after" :visible="true" />
+			<DxScrolling mode="virtual" />
+			<DxStateStoring
+				:enabled="true"
+				type="localStorage"
+				storage-key="organization"
+			/>
+			<DxEditing
+				:allow-adding="false"
+				:allow-updating="false"
+				:allow-deleting="false"
+				:useIcons="true"
+				mode="row"
+			/>
+
+			<DxColumn
+				data-field="name"
+				data-type="string"
+				:caption="$t('labels.name')"
+			>
+				<DxRequiredRule />
+			</DxColumn>
+			<DxColumn
+				data-field="regionId"
+				data-type="number"
+				:caption="$t('labels.region')"
+			>
+				<DxLookup
+					value-expr="id"
+					display-expr="name"
+					:data-source="regionDataSource"
+				/>
+				<DxRequiredRule />
+			</DxColumn>
+			<DxColumn
+				data-field="districtId"
+				data-type="number"
+				:caption="$t('labels.district')"
+			>
+				<DxLookup
+					value-expr="id"
+					display-expr="name"
+					:data-source="districtDataSource"
+				/>
+				<DxRequiredRule />
+			</DxColumn>
+			<DxColumn
+				data-field="organizationType"
+				data-type="number"
+				:caption="$t('labels.organizationType')"
+			>
+				<DxLookup
+					value-expr="id"
+					display-expr="name"
+					:data-source="organizationTypeDataSource"
+				/>
+				<DxRequiredRule />
+			</DxColumn>
+			<DxColumn
+				data-field="parentId"
+				data-type="number"
+				:caption="$t('labels.parent')"
+			>
+				<DxLookup
+					value-expr="id"
+					display-expr="name"
+					:data-source="parentDataSource"
+				/>
+			</DxColumn>
+			<DxColumn
+				data-field="status"
+				data-type="number"
+				:caption="$t('labels.status')"
+			>
+				<DxLookup
+					value-expr="id"
+					display-expr="name"
+					:data-source="statusDataSource"
+				/>
+				<DxRequiredRule />
+			</DxColumn>
+			<DxColumn :width="100" :buttons="editButtons" type="buttons" />
+		</DxTreeList>
+	</div>
+</template>
+
+<script lang="ts">
+import Vue from "vue";
+
+import {
+	DxTreeList,
+	DxColumn,
+	DxFilterRow,
+	DxEditing,
+	DxColumnChooser,
+	DxHeaderFilter,
+	DxSearchPanel,
+	DxSelection,
+	DxLookup,
+	DxScrolling,
+	DxRequiredRule,
+	DxStateStoring,
+	DxColumnFixing
+} from "devextreme-vue/tree-list";
+import DataSource from "devextreme/data/data_source";
+import { Statuses } from "~/infrastructure/data-sources/Statuses";
+import { OrganizationTypes } from "~/infrastructure/data-sources/OrganizationTypes";
+
+export default Vue.extend({
+	components: {
+		DxSearchPanel,
+		DxTreeList,
+		DxColumn,
+		DxEditing,
+		DxHeaderFilter,
+		DxScrolling,
+		DxLookup,
+		DxColumnChooser,
+		DxColumnFixing,
+		DxFilterRow,
+		DxRequiredRule,
+		DxStateStoring,
+		DxSelection
+	},
+	props: {
+		valueExpr: {
+			type: String,
+			default: "id"
+		},
+		filter: {
+			type: Array,
+			default: null
+		}
+	},
+	data() {
+		return {
+			organization: new DataSource({
+				store: this.$dxStore({
+					key: "id",
+					loadUrl: this.$dataApi.organization,
+					insertUrl: this.$dataApi.organization,
+					removeUrl: this.$dataApi.organization,
+					updateUrl: this.$dataApi.organization
+				}),
+				filter: this.filter
+			}),
+			regionDataSource: this.$dxStore({
+				key: "id",
+				loadUrl: this.$dataApi.region
+			}),
+			districtDataSource: this.$dxStore({
+				key: "id",
+				loadUrl: this.$dataApi.district
+			}),
+			parentDataSource: this.$dxStore({
+				key: "id",
+				loadUrl: this.$dataApi.organization
+			}),
+			statusDataSource: Statuses(this),
+			organizationTypeDataSource: OrganizationTypes(this)
+		};
+	},
+	computed: {
+		editButtons() {
+			return [
+				{
+					hint: this.$t("labels.choose"),
+					icon: "check",
+					onClick: e => {
+						this.$emit("valueSelected", e.row.data[this.valueExpr]);
+					}
+				}
+			];
+		}
+	},
+	methods: {
+		rowDblClick(e) {
+			this.$emit("valueSelected", e.data[this.valueExpr]);
+		},
+		toolbarPreparing(e) {
+			e.toolbarOptions.items = [
+				{
+					location: "after",
+					widget: "dxButton",
+					options: {
+						icon: "refresh"
+					},
+					onClick: () => {
+						this.organization.reload();
+					}
+				},
+				...e.toolbarOptions.items
+			];
+		}
+	}
+});
+</script>
+
+<style scoped></style>
